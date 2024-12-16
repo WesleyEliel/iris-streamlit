@@ -33,6 +33,8 @@ with st.sidebar:
     """
             )
 
+data_loaded = False
+
 with st.expander("Importation de données", True):
     _data_source_options = {
         'Importer les données': 'import',
@@ -50,17 +52,12 @@ with st.expander("Importation de données", True):
         file = "iris.csv"
     if file:
         dataframe = pd.read_csv(file)
+        data_loaded = True
         len_file = dataframe.shape[0]
         number_of_lines_to_display = st.slider("Nombre de lignes à traiter ?", 0, len_file, len_file)
 
-if file:
-    print("\n\n\n\n\n")
-    print(file)
-    print("\n\n\n\n\n")
-    dataframe = pd.read_csv(file)
-    print("\n\n\n\n\n")
-    print(dataframe)
-    print("\n\n\n\n\n")
+if data_loaded:
+
     iris = dataframe.iloc[:number_of_lines_to_display]
     with st.expander("Visualisation des données", True):
         # The actual dataset info
@@ -141,4 +138,26 @@ if file:
 
     # Model testing:
     with st.expander("Test du model avec des valeurs personnelles", True):
-        pass
+        # Input fields for sepal length and width, and petal length and width
+        # Todo: For min and max values get the min and max value for each item in the dataset
+        sepal_length = st.number_input("Sepal Length (cm)", min_value=0.0, max_value=10.0)
+        sepal_width = st.number_input("Sepal Width (cm)", min_value=0.0, max_value=5.0)
+        petal_length = st.number_input("Petal Length (cm)", min_value=0.0, max_value=6.0)
+        petal_width = st.number_input("Petal Width (cm)", min_value=0.0, max_value=2.5)
+
+        # Predict button
+        if st.button("Predict"):
+            # Combine input values into a single row
+            input_data = [[sepal_length, sepal_width, petal_length, petal_width]]
+
+            # Scale the input data
+            scaled_input = scaler.transform(input_data)
+
+            # Make prediction
+            # prediction = model.predict(scaled_input)[0]
+
+            # # Map prediction to Iris species names
+            # iris_species = ['Setosa', 'Versicolor', 'Virginica']
+            # predicted_species = iris_species[prediction]
+
+            st.write(f"The predicted Iris flower is: **{'predicted_species'}**")
